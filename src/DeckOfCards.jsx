@@ -21,8 +21,6 @@ function DeckOfCards() {
     }
   );
 
-  const [cardStatus, setCardStatus] = useState(false);
-
   /** Fetch Deck ID from Deck API on initial render */
   useEffect(function fetchDeckIdOnStart() {
     console.log("DECK ID", deckData);
@@ -40,33 +38,21 @@ function DeckOfCards() {
 
   console.log("CARD", deckData.cardData.currentCard);
 
-  /** Fetch card from Deck API on re-render */
-  useEffect(function fetchNewCard() {
+  /** Fetch card from Deck API */
+  async function fetchCard() {
+    const card = await getCardImgFromDeck(deckData.cardData.deckId);
 
-    console.log("DECK ID INSIDE EFFECT", deckData.cardData.deckId);
-    if (cardStatus === true) {
-      async function fetchCard() {
-        const card = await getCardImgFromDeck(deckData.cardData.deckId);
+    setData(curr => ({
+      ...curr,
+      cardData: { ...curr.cardData, currentCard: card },
+    }));
+  };
 
-        setData(curr => ({
-          ...curr,
-          cardData: { ...curr.cardData, currentCard: card },
-        })
-        );
 
-        setCardStatus(false);
-      }
-      fetchCard();
-    }
-
-  }, [cardStatus]);
-  //  [deckData.drawingCard]); // <--- FIXME: do this every time button is called
-
-  //FIXME: there is a loop happening. DrawingCard is happening twice bc it's based on status.
-
-  //when button is clicked, change drawingCard to be true
   function drawCard() {
-    setCardStatus(true);
+    //Don't need to put it inside a useEffect.
+    //Can just call async fn upon click and cuts down on number of re-renders
+    fetchCard();
   }
 
   return (
