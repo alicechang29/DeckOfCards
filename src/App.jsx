@@ -13,7 +13,7 @@ import DeckOfCards from './DeckOfCards';
 function App() {
   return (
     <div className="App">
-      <DeckOfCards />;
+      <DeckOfCards />
     </div>
   );
 };

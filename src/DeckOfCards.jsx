@@ -16,11 +16,12 @@ function DeckOfCards() {
 
   const [deckData, setData] = useState(
     {
-      deckData: null,
-      isLoading: true,
-      drawingCard: false
+      cardData: {},
+      isLoading: true
     }
   );
+
+  const [cardStatus, setCardStatus] = useState(false);
 
   /** Fetch Deck ID from Deck API on initial render */
   useEffect(function fetchDeckIdOnStart() {
@@ -29,7 +30,7 @@ function DeckOfCards() {
       const deckId = await getDeckOfCardsID();
       console.log("DECK ID", deckId);
       setData({
-        deckData: { deckId, currentCard: null },
+        cardData: { deckId, currentCard: null },
         isLoading: false
       });
     }
@@ -37,40 +38,41 @@ function DeckOfCards() {
     fetchDeckId();
   }, []); // <--- Only runs at the initial render
 
+  console.log("CARD", deckData.cardData.currentCard);
 
   /** Fetch card from Deck API on re-render */
   useEffect(function fetchNewCard() {
 
-    async function fetchCard() {
-      const card = await getCardImgFromDeck(deckData.deckId);
+    console.log("DECK ID INSIDE EFFECT", deckData.cardData.deckId);
+    if (cardStatus === true) {
+      async function fetchCard() {
+        const card = await getCardImgFromDeck(deckData.cardData.deckId);
 
-      setData(curr => ({
-        ...curr,
-        deckData: { ...curr.deckData, currentCard: card },
-        drawingCard: false
-      })
-      );
+        setData(curr => ({
+          ...curr,
+          cardData: { ...curr.cardData, currentCard: card },
+        })
+        );
+
+        setCardStatus(false);
+      }
+      fetchCard();
     }
-    fetchCard();
 
-  }, [deckData.drawingCard]); // <--- FIXME: do this every time button is called
+  }, [cardStatus]);
+  //  [deckData.drawingCard]); // <--- FIXME: do this every time button is called
+
+  //FIXME: there is a loop happening. DrawingCard is happening twice bc it's based on status.
 
   //when button is clicked, change drawingCard to be true
   function drawCard() {
-    setData(curr => ({
-      ...curr,
-      drawingCard: true
-    })
-    );
+    setCardStatus(true);
   }
 
   return (
     <div className="DeckOfCards">
       <Button onClick={drawCard}>Draw a card </Button>
-      {deckData?.drawingCard === false && deckData?.currentCard !== null
-        ? <Card img={deckData?.currentCard} />
-        : null
-      }
+      <Card img={deckData.cardData.currentCard} />
     </div>
   );
 }

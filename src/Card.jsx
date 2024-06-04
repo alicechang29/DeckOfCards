@@ -7,11 +7,11 @@
  */
 
 
-function Card({ imgSrc }) {
-
+function Card({ img }) {
+  console.log("CARD IMAGE", img);
   return (
     <div className="Card">
-      <img src={imgSrc}></img>
+      <img src={img}></img>
     </div>
   );
 }
