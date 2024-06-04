@@ -11,7 +11,7 @@ function Card({ imgSrc }) {
 
   return (
     <div className="Card">
-      <img src={img}></img>
+      <img src={imgSrc}></img>
     </div>
   );
 }
